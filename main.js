@@ -17,6 +17,18 @@ renderer.setPixelRatio(devicePixelRatio);
 
 document.body.append(renderer.domElement);
 
+var styles = {
+    position: 'fixed',
+    left: (window.innerWidth / 2 - 50) + 'px',
+    top: (window.innerHeight / 2 - 50) + 'px',
+    height: '100px',
+    width: '100px'
+};
+var ctrlObj = document.getElementById('ctrlObj1');
+Object.assign(ctrlObj.style, styles);
+//console.log();
+
+
 // render a sphere //
 const sphere = new THREE.Mesh(
     new THREE.SphereGeometry(5, 50, 50),
@@ -38,7 +50,33 @@ const sphere = new THREE.Mesh(
 
 //scene.add(sphere);
 
-// render a sphere //
+// add pin
+
+let pin = new THREE.Mesh(
+    new THREE.SphereBufferGeometry(0.10, 50, 50),
+    //    new THREE.MeshBasicMaterial({color: 0x80f004})
+    new THREE.MeshBasicMaterial({
+        color: 0xff0000
+    })
+);
+
+// lat: 15.2993° N long: 74.1240° E
+var lat = 15.2993,
+    lon = 74.1240,
+    radius = 5,
+    x = ((radius) * Math.cos(lon)),
+    y = -((radius) * Math.cos(lat) * Math.cos(lon)),
+    z = ((radius) * Math.sin(lon));
+//console.log(x + ' ' + y + ' ' + z);
+pin.position.set(x, y, z);
+
+const sphereGroup = new THREE.Group();
+sphereGroup.add(sphere);
+sphereGroup.add(pin);
+scene.add(sphereGroup);
+
+
+// render a atmosphere //
 const atmosphere = new THREE.Mesh(
     new THREE.SphereGeometry(5, 50, 50),
     new THREE.ShaderMaterial({
@@ -49,36 +87,58 @@ const atmosphere = new THREE.Mesh(
     })
 );
 atmosphere.scale.set(1.1, 1.1, 1.1);
-scene.add(atmosphere);
 
 const group = new THREE.Group();
-group.add(sphere);
+group.add(sphereGroup);
 scene.add(group);
+
+
+
 
 camera.position.z = 15;
 
 function animate() {
     requestAnimationFrame(animate);
     renderer.render(scene, camera);
-    //    mesh.rotation.x += 0.01;
-    sphere.rotation.y += 0.01;
-    //    group.rotation.y = mouse.x;
-    gsap.to(group.rotation, {
-        x: -mouse.y * 0.3,
-        y: mouse.x,
-        duration: 2
-    });
+    //    console.log('rotation y '+sphereGroup.rotation.y);
+    if (mouseActions.clicked) {
+    } else {
+        sphereGroup.rotation.y += 0.025;
+//        sphereGroup.rotation.y = 3.5;
+        gsap.to(group.rotation, {
+            y: mouse.x * Math.sign(mouse.x),
+            duration: 3
+        });
+    }
+    mouseActions.moved = false;
 }
 
 const mouse = {
-    x: undefined,
-    y: undefined
+    x: 0,
+    y: 0
 }
+
+const mouseActions = {
+    moved: false,
+    clicked: false
+};
 
 animate();
 
+document.getElementById('focusLoc').addEventListener('click', () => {
+//    console.log("Link Clicked");
+    group.rotation.x = 0;
+    group.rotation.y = 0;
+    sphereGroup.rotation.x = 0;
+    sphereGroup.rotation.y = 0;
+    sphereGroup.rotation.y = 2.5;
+    
+    mouseActions.clicked = !mouseActions.clicked;
+});
+
 addEventListener('mousemove', () => {
-    mouse.x = (event.clientX / innerWidth) * 2 - 1;
-    mouse.y = (event.clientY / innerHeight) * 2 + 1;
-    //    console.log(mouse);
+    mouse.x = (event.clientX / innerWidth) * 4;
+    mouse.y = (event.clientY / innerHeight) * 4 - 2;
+    // console.log(mouse);
+    //    mouseActions.moved = true;
 });

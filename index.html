@@ -4,19 +4,38 @@
 <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Yuji+Mai&display=swap" rel="stylesheet">
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Vite App</title>
     <style>
         body {
             margin: 0;
+            font-family: 'Yuji Mai', serif;
         }
-
+        #welcome {
+            font-size: large;
+            font-weight: 400;
+            position: absolute;
+            color: white;
+        }
+        a:visited {
+            color: chocolate;
+        }
+        a:active {
+            color: white;
+        }
+        a {
+            text-decoration: none;
+        }
     </style>
 </head>
 
 <body>
-    <div id="app"></div>
+    <div id="welcome">Hello World, <br>From <a href="#" id="focusLoc">BITS Pilani, Goa Campus</a></div>
     <script type="module" src="/main.js"></script>
+    <div id="ctrlObj1"></div>
 </body>
 
 </html>
